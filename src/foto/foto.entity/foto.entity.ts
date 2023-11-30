@@ -14,7 +14,7 @@ export class FotoEntity {
     velObturacion: number;
 
     @Column()
-    apartura: number;
+    apertura: number;
 
     @Column()
     fecha: Date;

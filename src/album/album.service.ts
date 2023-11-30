@@ -19,11 +19,14 @@ export class AlbumService {
         return album;
     }
 
-    async create(album: AlbumEntity): Promise<AlbumEntity> {
+    async createAlbum(album: AlbumEntity): Promise<AlbumEntity> {
+        if (album.titulo.length == 0) {
+            throw new Error('El título no debe estar vacío');
+        }
         return await this.albumRepository.save(album);
     }
 
-    async delete(id: number) {
+    async deleteAlbum(id: number) {
         const albumToDelete: AlbumEntity = await this.findAlbumById(id);
         if (!albumToDelete)
             throw new BusinessLogicException("No se encontró un album con ese ID", BusinessError.NOT_FOUND);

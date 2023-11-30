@@ -23,7 +23,10 @@ export class UsuarioService {
         return usuario;
     }
 
-    async create(usuario: UsuarioEntity): Promise<UsuarioEntity> {
+    async createUsuario(usuario: UsuarioEntity): Promise<UsuarioEntity> {
+        if (usuario.telefono.length !== 10) {
+            throw new Error('El teléfono debe tener 10 caracteres.');
+        }
         return await this.usuarioRepository.save(usuario);
     }
 }

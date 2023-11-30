@@ -19,11 +19,4 @@ export class AlbumEntity {
     @OneToMany(() => FotoEntity, foto => foto.album)
     foto: FotoEntity[];
 
-    @BeforeInsert()
-    validate() {
-        if (!this.titulo || !this.titulo.trim()) {
-            throw new Error("El nombre del titulo no puede estar vacío.");
-        }
-    }
-
 }
