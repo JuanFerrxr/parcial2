@@ -1,6 +1,6 @@
 import { FotoEntity } from 'src/foto/foto.entity/foto.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity/usuario.entity';
-import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {BeforeInsert, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class AlbumEntity {
@@ -18,5 +18,12 @@ export class AlbumEntity {
 
     @OneToMany(() => FotoEntity, foto => foto.album)
     foto: FotoEntity[];
+
+    @BeforeInsert()
+    validate() {
+        if (!this.titulo || !this.titulo.trim()) {
+            throw new Error("El nombre del titulo no puede estar vacío.");
+        }
+    }
 
 }
