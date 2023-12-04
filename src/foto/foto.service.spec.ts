@@ -3,6 +3,8 @@ import { FotoService } from './foto.service';
 import { BusinessError, BusinessLogicException } from 'src/shared/errors/business-errors';
 import { FotoEntity } from './foto.entity/foto.entity';
 import { Repository } from 'typeorm';
+import { AlbumService } from 'src/album/album.service';
+
 
 describe('FotoService', () => {
   let service: FotoService;

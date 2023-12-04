@@ -35,9 +35,11 @@ export class AlbumService {
         if (!albumToDelete) {
             throw new BusinessLogicException("No se encontró un album con ese ID", BusinessError.NOT_FOUND);
         }
+
         if (albumToDelete.foto && albumToDelete.foto.length > 0) {
             throw new BusinessLogicException("No se puede eliminar un álbum si tiene fotos", BusinessError.PRECONDITION_FAILED);
         }
+    
         await this.albumRepository.remove(albumToDelete);
     }
 
