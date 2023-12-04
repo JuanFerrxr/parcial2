@@ -3,12 +3,15 @@ import { FotoEntity } from './foto.entity/foto.entity';
 import { BusinessError, BusinessLogicException } from 'src/shared/errors/business-errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AlbumEntity } from 'src/album/album.entity/album.entity';
 
 @Injectable()
 export class FotoService {
+    [x: string]: any;
     constructor(
         @InjectRepository(FotoEntity)
-        private readonly fotoRepository: Repository<FotoEntity>
+        private readonly fotoRepository: Repository<FotoEntity>,
+        private readonly albumRepository: Repository<AlbumEntity>,
     ) { }
 
     async findAllFotos(): Promise<FotoEntity[]> {
@@ -16,9 +19,9 @@ export class FotoService {
     }
 
     async findFotoById(id: number): Promise<FotoEntity> {
-        const foto: FotoEntity = await this.fotoRepository.findOne({where: {id}, relations: ["id", "iso", "velObturacion", "apertura", "fecha"] } );
+        const foto: FotoEntity = await this.fotoRepository.findOne({ where: { id }, relations: ["id", "iso", "velObturacion", "apertura", "fecha"] });
         if (!foto)
-          throw new BusinessLogicException("No se encontró una foto con ese ID", BusinessError.NOT_FOUND);
+            throw new BusinessLogicException("No se encontró una foto con ese ID", BusinessError.NOT_FOUND);
         return foto;
     }
 
@@ -37,7 +40,7 @@ export class FotoService {
 
         const valoresarriba = [foto.iso > 3200 ? 1 : 0, foto.velObturacion > 126 ? 1 : 0, foto.apertura > 16 ? 1 : 0];
         const valoresarribatotal = valoresarriba.reduce((suma, valor) => suma + valor, 0);
-        
+
         if (valoresarribatotal > 2) {
             throw new BusinessLogicException("Máximo 2 de estos valores deben estar por encima del valor medio de sus cotas.", BusinessError.BAD_REQUEST);
         }
@@ -46,5 +49,25 @@ export class FotoService {
 
         return newFoto;
     }
+
+
+    async deleteFoto(id: number): Promise<void> {
+        const fotoToDelete: FotoEntity = await this.findFotoById(id);
+
+        if (!fotoToDelete) {
+            throw new BusinessLogicException("No se encontró una foto con ese ID", BusinessError.NOT_FOUND);
+        }
+
+        const albumId = fotoToDelete.album?.[0]?.id
+        await this.fotoRepository.remove(fotoToDelete);
+
+        if (albumId) {
+            const albumFotos = await this.fotoRepository.find({ where: { album: { id: albumId } } });
+            if (!albumFotos || albumFotos.length === 0) {
+                await this.albumRepository.delete(albumId);
+            }
+        }
+    }
+
 
 }

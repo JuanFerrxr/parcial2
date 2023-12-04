@@ -1,6 +1,6 @@
 import { AlbumEntity } from 'src/album/album.entity/album.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity/usuario.entity';
-import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class FotoEntity {
@@ -22,7 +22,7 @@ export class FotoEntity {
     @OneToMany(() => UsuarioEntity, usuario => usuario.foto)
     usuario: UsuarioEntity[];
 
-    @ManyToMany(() => AlbumEntity, album => album.foto)
+    @ManyToOne(() => AlbumEntity, album => album.foto)
     album: AlbumEntity[];
 
 }
